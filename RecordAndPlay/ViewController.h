@@ -7,9 +7,22 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <AVFoundation/AVFoundation.h>
 
-@interface ViewController : UIViewController
+@interface ViewController : UIViewController <UIAlertViewDelegate, AVAudioRecorderDelegate, AVAudioPlayerDelegate, UIActionSheetDelegate>
 
+@property (weak, nonatomic) IBOutlet UILabel *outletRecName;
+@property (weak, nonatomic) IBOutlet UIImageView *imgRecordPause;
+@property (weak, nonatomic) IBOutlet UIImageView *imgStop;
+@property (weak, nonatomic) IBOutlet UIImageView *imgPlay;
+
+@property (weak, nonatomic) IBOutlet UIButton *actionRecordPause;
+@property (weak, nonatomic) IBOutlet UIButton *actionStop;
+@property (weak, nonatomic) IBOutlet UIButton *actionPlay;
+
+- (IBAction)actionRecordPause:(id)sender;
+- (IBAction)actionStop:(id)sender;
+- (IBAction)actionPlay:(id)sender;
 
 @end
 
