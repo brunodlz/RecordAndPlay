@@ -7,6 +7,7 @@
 //
 
 #import "ViewController.h"
+#import <AudioToolbox/AudioToolbox.h>
 
 @interface ViewController () {
     AVAudioRecorder *recorder;
@@ -32,6 +33,10 @@
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (UIStatusBarStyle) preferredStatusBarStyle {
+    return UIStatusBarStyleLightContent;
 }
 
 - (IBAction)actionRecordPause:(id)sender {
@@ -62,9 +67,14 @@
 
 - (IBAction)actionPlay:(id)sender {
     if (!recorder.recording){
-        player = [[AVAudioPlayer alloc] initWithContentsOfURL:recorder.url error:nil];
-        [player setDelegate:self];
-        [player play];
+        
+        if ([self.outletRecName.text isEqualToString:@""]) {
+            player = [[AVAudioPlayer alloc] initWithContentsOfURL:recorder.url error:nil];
+            [player setDelegate:self];
+            [player play];
+        } else {
+            [self replay:self.outletRecName.text];
+        }
         
         [self setPlayOn];
     }
@@ -102,6 +112,7 @@
         [_actionPlay setEnabled:NO];
         
         [self.imgPlay setImage:[UIImage imageNamed:@"play.png"]];
+        self.outletRecName.text = @"";
     }
 }
 
@@ -152,9 +163,20 @@
 
 -(void)updatePlay:(NSNotification *)userInfo
 {
-    NSString *rec = [[userInfo.userInfo valueForKey:@"rec"] stringByReplacingOccurrencesOfString:@".caf" withString:@""];
-    [self setNameRec:rec];
-    [self audioRecorderDidFinishRecording:nil successfully:YES];
+    NSString *fileName = [userInfo.userInfo valueForKey:@"rec"];
+    
+    self.outletRecName.text = fileName;
+    
+    [_actionPlay setEnabled:YES];
+    [self setPlayOn];
+}
+
+- (void) replay:(NSString *)fileName {
+    NSString *path = [[NSString stringWithFormat:@"~/Documents/%@", fileName] stringByExpandingTildeInPath];
+    NSURL *soundUrl = [NSURL fileURLWithPath:path];
+    
+    player = [[AVAudioPlayer alloc] initWithContentsOfURL:soundUrl error:nil];
+    [player play];
 }
 
 -(void)setPlayOn
